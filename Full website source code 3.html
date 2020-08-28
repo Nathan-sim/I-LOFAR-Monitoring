@@ -419,7 +419,7 @@
 
             .tablink:hover {
                 /*UNCOMMENT BELOW IF YOU WANT BUTTONS TO HAVE COLOUR WHEN HOVERING OVER THEM*/
-                /* background-color: #22a571; */
+                 background-color: #22a571;
             }
 
         .button {
@@ -443,7 +443,7 @@
 
             .button1:hover {
                 /*UNCOMMENT BELOW IF YOU WANT BUTTONS TO HAVE COLOUR WHEN HOVERING OVER THEM*/
-                /* background-color: #22a571; */
+                background-color: #22a571;
             }
     </style>
 
@@ -684,7 +684,7 @@
 
             }
 
-            for (var i = 1; i < 61; i++) {
+            for (var i = 1; i < 81; i++) {
                 var left = document.createElement('div');
                 left.id = 'spectra_left_X' + i;
                 left.className = 'column';
@@ -827,9 +827,9 @@
             loadDoc();
             loadDoc2();
 
-            //reloading the log files every 4 minutes to ensure to reflect new changes
-            setInterval(loadDoc(), 240000);
-            setInterval(loadDoc(), 240000)
+            //reloading the log files every 1 minute to ensure to reflect new changes
+            setInterval(loadDoc(), 60000);
+            setInterval(loadDoc(), 60000);
 
             //the log files are loaded without any line breaks, below code is necessary to add line breaks, do not delete
             var change = document.getElementById("my_logfile2").value;
