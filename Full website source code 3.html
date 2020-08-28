@@ -1,14 +1,31 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <!-- -- Refreshes page every 10 mins for live map update -- -->
+    <!-- -- UNCOMMENT THE BELOW CODE IF YOU WANT WEBSITE TO REFRESH ITSELF EVERY 10 MINUTES-- -->
     <!--- meta http-equiv="refresh" content="600" -->
-    <!-- -- Libraries for the calendar used on website-- -->
+    <!-- ---------------------------------- LIBRARIES USED FOR CALENDAR USED ON WEBSITE ARE BELOW------------------------------- -- -->
+
     <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
     <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+
+    <!-- -------------------------------------LIBRARIES FOR THE INTERACTIVE MAP BELOW---------------------------------- -- -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- -- Stylesheet for the map below -- -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+
+    <!-- -- Libraries for the map below -- -->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-ant-path" type="text/javascript"></script>
+    <script src="https://lofar.dias.ie/status_map/leaflet_curve/src/leaflet.curve.js"></script>
+
     <style>
-        /*Styling for the calendar done below*/
+        /*------------------------------------STYLING FOR CALENDAR DONE BELOW----------------------------------------------------------------------- */
+        div:empty {
+            display: none;
+        }
 
         #container {
             visibility: hidden;
@@ -66,22 +83,19 @@
             color: #22a571;
         }
     </style>
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
 
-    <!-- -- Styling for the status Map-- -->
+    <!-- ------------------------------------ ALL STYLING FOR THE STATUS MAP DONE BELOW-------------------------------------------------------------------------------------------------- -->
     <style>
-        .second_container {
-            min-height: 10vh;
-            background-color: #fff;
+        div.lba * {
+            color: black;
         }
 
-        .container_hba {
-            margin: 0px auto;
-            width: 100 px;
-            text-align: center;
-            #transform:rotate(45deg);
-            #float: left;
-            padding-top: 50px;
+        div.hba * {
+            color: white;
         }
 
         #hba_info {
@@ -125,12 +139,6 @@
             overflow: hidden;
             color: #fff;
             cursor: pointer;
-        }
-
-        #hba_problem {
-            animation-name: color;
-            animation-duration: 2s;
-            animation-iteration-count: infinite;
         }
 
         .hba:hover {
@@ -284,10 +292,6 @@
             width: 100%;
         }
 
-        iframe {
-            width: 100%;
-        }
-
         .polyline {
             stroke: #003b4a;
             fill: none;
@@ -323,7 +327,6 @@
             opacity: 0;
         }
 
-        }
 
         .lineConnect {
             fill: none;
@@ -362,10 +365,6 @@
                 margin-top: 90vh;
             }
 
-            .container_hba {
-                width: 100vw;
-            }
-
             .hba {
                 position: relative;
                 border: none;
@@ -398,26 +397,16 @@
             }
         }
     </style>
-
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-    <!-- -- Stylesheet for the map below -- -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
-
-    <!-- -- Libraries for the map below -- -->
-    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-ant-path" type="text/javascript"></script>
-    <script src="https://lofar.dias.ie/status_map/leaflet_curve/src/leaflet.curve.js"></script>
-
-
-    <!-- -- styling used to make website tab pages to split the website between international and local mode functionalities -- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- -- ALL STYLING OF THE BUTTONS USED TO SWITCH BETWEEN OBSERVATIONS/STATUS MAP/ENGINEERING INFO IS DONE BELOW -- -->
     <style>
 
 
         /* Style tab links */
         .tablink {
-            background-color:  #003b4a; 
+            background-color: #003b4a;
             color: white;
             float: left;
             border: 12px;
@@ -429,6 +418,7 @@
         }
 
             .tablink:hover {
+                /*UNCOMMENT BELOW IF YOU WANT BUTTONS TO HAVE COLOUR WHEN HOVERING OVER THEM*/
                 /* background-color: #22a571; */
             }
 
@@ -448,15 +438,19 @@
         }
 
         .button1 {
-             background-color: #003b4a;
+            background-color: #003b4a;
         }
 
             .button1:hover {
+                /*UNCOMMENT BELOW IF YOU WANT BUTTONS TO HAVE COLOUR WHEN HOVERING OVER THEM*/
                 /* background-color: #22a571; */
             }
     </style>
 
-    <!-- -- Below CSS code is to ensure that the spectra images appear side by side (2 at a time taking 50% space)-- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- -- Below STYLING code is to ensure that the spectra images appear side by side (2 at a time taking 50% space)-- -->
     <style>
 
         div.Status Layout * {
@@ -471,13 +465,14 @@
             display: flex;
         }
 
-        /* Create two equal columns that sits next to each other */
+        /* CREATES TWO EQUALLY SIZED COLUMNS FOR SPECTRA THAT SIT BESIDES EACH OTHER*/
         .column {
             flex: 50.0%;
             padding: 5px;
             transition: flex 1s; /* Animation */
         }
 
+            /* THE BELOW CODE INCREASES SIZE OF SPECTRA WHEN USER IS CLICKING DOWN MOUSE ON IT */
             .column:active {
                 flex: 125%
             }
@@ -489,8 +484,10 @@
         }
     </style>
 
-
-
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- -- BELOW SCRIPT IS USED TO INITALISE THE TILES OF EACH ANTTENNA IN THE STATUS MAP -- -->
     <script>
         function activate_tiles() {
             // Popup Content Manager for the HBAs
@@ -564,11 +561,28 @@
             });
         };
     </script>
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
 
 </head>
+<!-- -- NOTE THAT EVERYTHING INBETWEEN <head> and </head>, I.E ALL THE CODE ABOVE NEEDS TO BE INSERTED INTO HEADER AND NOT INTO CODE BLOCK ON WORDPRESS, USE THE "INSERT SCRIPT TO HEAD" BOX AT BOTTOM OF PAGE EDITOR -- -->
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- -- NOTE THAT EVERYTHING INBETWEEN <BODY> and </BODY>, I.E ALL THE CODE BELOW NEEDS TO BE INSERTED INTO "CODE BLOCK" ON WORDPRESS EDITOR -- -->
 <body>
-    <!-- -- below buttons are used to divide page up into three different categories -- -->
+    <!-- ----------------------- below buttons are used to divide page up into three different categories --------------------------------------------------- -->
     <button class="tablink" onclick="openPage('Real Time Observations')" id="defaultOpen">Observations</button>
     <button class="tablink" onclick="openPage('Status Layout')" id="statusmap">Antenna Status</button>
     <button class="tablink" onclick="openPage('Telescope Info')">Engineering Info</button>
@@ -576,6 +590,9 @@
     <br>
     <br>
     <br>
+    <!-- ----------------------- ------------------------------------------------------------------------ --------------------------------------------------- -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------------------------->
+    <!-- ----------------------- BELOW CODE POPULATES ALL THE REAL TIME SPECTRA AND SPECTRA FROM CALENDAR FUNCTION --------------------------------------------------- -->
     <div id="Real Time Observations" class="tabcontent">
         <center><h2>Real Time Spectra</h2></center>
         <br>
@@ -583,21 +600,24 @@
         <h4>By default if telescope is in local mode, real time plots are shown, updated on a rolling 10 minutes basis.</h4>
         <br>
         <h4>If you would like to access archived plots, pick a date in the calendar below and click "load graphs":</h4>
-        <!-- -- Inserting the Calendar element into website below-- -->
-        <div id="test">
 
-        </div>
+        <!-- ------------------------ Inserting the Calendar element into website below-- --------------------------------->
+        <div id="test"></div>
         <div id="container" class="date"><input id="value_date" type="text" /></div>
         <button class="button button1" id="button_spectra">Load graphs</button>
-        <div id="spectra_update">
-        </div>
+        <div id="spectra_update"></div>
         <br>
         <br>
+        <!-- ------------------------ BELOW DIV CONTAINS SPECTRA-- --------------------------------->
         <div id="spectracontainer"></div>
         <div id="javascript"> </div>
-        <script src="https://lofar.ie/monitor/filedates_calendar.log"></script>
+
+        <!-- ------------------------ FETCHING THE BLACKLIST OF DATES FOR CALENDAR-- --------------------------------->
+        <script src="https://lofar.ie/monitor/filedates_calendar.js"></script>
+
+        <!-- ------------------------ BELOW IS JAVASCRIPT FOR CALENDAR-- --------------------------------->
         <script>
-            //below code is inserting calendar
+            //BELOW CODE IS CREATING THE CALENDAR ELEMENT
             var ele = document.getElementById('container');
             if (ele) {
                 ele.style.visibility = "visible";
@@ -615,6 +635,7 @@
                 cssClass: 'e-custom-style'
             });
 
+            //BELOW FUNCTION DISABLES ALL DATES ON THE BLACKLIST
             function onRenderCell(args) {
                 var i;
                 for (i = 0; i < date_list.length; i++) {
@@ -628,29 +649,26 @@
 
             datepicker.appendTo('#value_date');
 
-            let chosen_date = document.getElementById('value_date');
 
+            //CREATING A VARIABLES WITH TODAY'S DATE
+            let chosen_date = document.getElementById('value_date');
             var today = new Date();
             var dd = today.getDate();
-
             var mm = today.getMonth() + 1;
             var yyyy = today.getFullYear();
             if (dd < 10) {
                 dd = '0' + dd;
             }
-
             if (mm < 10) {
                 mm = '0' + mm;
             }
-
             today = yyyy + '/' + mm + '/' + dd;
 
+            //IF BUTTON TO CREATE SPECTRA IS CLICKED THE FUNCTION IS  RUN
             document.getElementById("button_spectra").addEventListener("click", spectra_generator);
-            //formatted = chosen_date.replace(/\\|\//g, '')
 
-
-            //creating rows and columns for the spectra
-            for (var i = 1; i < 61; i++) {
+            //creating rows and columns for the spectra - CURRENTLY SET AS 80 *4 = 320 PLACEHOLDERS
+            for (var i = 1; i < 81; i++) {
                 var newDiv = document.createElement('div');
                 newDiv.id = 'spectra_X' + i;
                 newDiv.className = 'row';
@@ -661,7 +679,7 @@
                 newDiv.id = 'spectra_Y' + i;
                 newDiv.className = 'row';
                 document.getElementById('spectracontainer').appendChild(newDiv);
-                // UNCOMMENT THE BELOW CREATES DIVIDER BETWEEN EACH LINE
+                // UNCOMMENT THE BELOW CREATES DIVIDER BETWEEN EACH SET OF 4 PLOTS
                 //document.getElementById("spectracontainer").innerHTML += "<hr>"
 
             }
@@ -728,8 +746,7 @@
                     prior.parentNode.insertBefore(script, prior);
                 }
 
-                //below code ensures that no borken link images come up on website, makes it look cleaner
-
+                //below code ensures that no broken link images come up on website, makes it look cleaner
                 document.querySelectorAll('img').forEach(function (img) {
                     img.onerror = function () { this.style.display = 'none'; };
                 })
@@ -742,8 +759,10 @@
 
         </script>
     </div>
-
-
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- -------------------------------------------------BELOW CODE IS FOR ENGINEERING INFO TAB----------------------------------------------------------------------------- -->
     <div id="Telescope Info" class="tabcontent">
         <div id="info">
             <center><h2>Real Time Information</h2></center>
@@ -760,7 +779,10 @@
             <div id="my_logfile1">
 
             </div>
-
+            <br>
+            <br>
+            <br>
+            <br>
             <br>
             <br>
         </div>
@@ -815,11 +837,15 @@
         </script>
 
     </div>
-
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
     <!-- -- Code below is from Jeremy's status map, note that it has been stripped of unneccesary elements, many of which would not work with the pre-imposed styling that comes with hosting webpage on wordpress website -- -->
+
     <div id="Status Layout" class="tabcontent" style="width: 100%; background-color: #FFFFFF">
         <center><h2 style='color:black;'>Status Map of Telescope </h2></center>
         <!-- -- ALL BELOW CODE USED FOR STATUS MAP OF ANTENNAE-- -->
+        <!-- -- Ensuring that tiles are scaled and reactivated if browser is resized-- -->
         <body onresize="scaleTiles(), activate_tiles()">
             <div class='info'>
                 <div class='close'>Close</div>
@@ -1126,27 +1152,18 @@
                 scaleTiles();
             </script>
 
-
-
-            <style>
-                div.hba * {
-                    color: white;
-                }
-            </style>
-
-            <style>
-                div.lba * {
-                    color: black;
-                }
-            </style>
         </body>
         <div>
             <br /><br /><br /><br />            <br /><br /><br /><br />            <br /><br /><br /><br />
             <br /><br /><br /><br />            <br /><br /><br /><br />            <br /><br /><br /><br />
         </div>
     </div>
+    </div>
 
-
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- -- below script needs to be kept at end of code, it divides out the page into three different tabs, observations/status map/engineering info -- -->
     <script>
         function openPage(pageName, elmnt, color) {
             var i, tabcontent, tablinks;
@@ -1165,7 +1182,5 @@
         // Get the element with id="defaultOpen" and click on it
         document.getElementById("defaultOpen").click();
     </script>
-    </div>
 </body>
-</html>
 </html>
