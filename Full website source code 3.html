@@ -1,0 +1,1171 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- -- Refreshes page every 10 mins for live map update -- -->
+    <!--- meta http-equiv="refresh" content="600" -->
+    <!-- -- Libraries for the calendar used on website-- -->
+    <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+    <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+    <style>
+        /*Styling for the calendar done below*/
+
+        #container {
+            visibility: hidden;
+            max-width: 250px;
+        }
+
+        #loader {
+            color: #22a571;
+            height: 40px;
+            width: 30%;
+            position: absolute;
+            top: 45%;
+            left: 45%;
+        }
+
+        #value_date {
+            display: block;
+        }
+
+
+        /*custom styles for calendar to reflect I-LOFAR theme*/
+
+        .e-input-group.e-date-wrapper.e-custom-style:not(.e-float-icon-left)::before, /* csslint allow: adjoining-classes*/
+        .e-input-group.e-date-wrapper.e-custom-style:not(.e-float-icon-left)::after /* csslint allow: adjoining-classes*/ { /* csslint allow: adjoining-classes*/
+            background: #22a571;
+        }
+
+        .e-date-wrapper.e-custom-style input.e-input::selection { /* csslint allow: adjoining-classes*/
+            background: #22a571;
+        }
+
+        .e-date-wrapper.e-custom-style input.e-input::-moz-selection { /* csslint allow: adjoining-classes*/
+            background: #22a571;
+        }
+
+        .e-calendar .e-content td.e-disabled .e-day, .e-calendar .e-content td.e-disabled:hover .e-day, .e-calendar .e-content td.e-disabled:focus .e-day {
+            color: #22a571;
+            font-weight: bold;
+        }
+
+        .e-date-wrapper.e-custom-style .e-input-group-icon.e-date-icon.e-icons, /* csslint allow: adjoining-classes*/
+        .e-date-wrapper.e-custom-style .e-input { /* csslint allow: adjoining-classes*/
+            color: #22a571;
+        }
+
+        .e-date-wrapper.e-custom-style input.e-input::selection { /* csslint allow: adjoining-classes*/
+            background: #22a571;
+        }
+
+        .e-date-wrapper.e-custom-style input.e-input::-moz-selection { /* csslint allow: adjoining-classes*/
+            background: #22a571;
+        }
+
+        .e-date-wrapper.e-custom-style .e-input-group-icon.e-date-icon.e-icons.e-active { /* csslint allow: adjoining-classes*/
+            color: #22a571;
+        }
+    </style>
+
+
+    <!-- -- Styling for the status Map-- -->
+    <style>
+        .second_container {
+            min-height: 10vh;
+            background-color: #fff;
+        }
+
+        .container_hba {
+            margin: 0px auto;
+            width: 100 px;
+            text-align: center;
+            #transform:rotate(45deg);
+            #float: left;
+            padding-top: 50px;
+        }
+
+        #hba_info {
+            text-align: center;
+            width: 100%;
+            margin: 0px auto;
+            margin-top: 10px;
+        }
+
+        .hba {
+            position: relative;
+            border: none;
+            display: inline-block;
+            width: 53px;
+            height: 53px;
+            background-color: #003b4a;
+            background-image: url('http://lofar.ie/wp-content/uploads/2020/08/hba_tile_white.png');
+            background-size: cover;
+            line-height: 53px;
+            transition: all 0.2s ease;
+            border-radius: 0px;
+            #text-indent: -9999px;
+            overflow: hidden;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .hba_active {
+            position: relative;
+            border: none;
+            display: inline-block;
+            width: 53px;
+            height: 53px;
+            background-color: #22a571;
+            background-image: url('http://lofar.ie/wp-content/uploads/2020/08/hba_tile_white.png');
+            background-size: cover;
+            line-height: 53px;
+            transition: all 0.2s ease;
+            border-radius: 0px;
+            #text-indent: -9999px;
+            overflow: hidden;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #hba_problem {
+            animation-name: color;
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+        }
+
+        .hba:hover {
+            background-color: #22a571;
+            z-index: 1000;
+            transform: scale(1.4);
+        }
+
+        #hba_super_container {
+            margin: 0px auto;
+            width: 800px;
+            text-align: center;
+        }
+
+        #hba_container {
+            margin: 0px auto;
+            display: inline-block;
+            height: 800px;
+            position: relative;
+            width: 800px;
+        }
+
+        .info img {
+            width: 100%;
+            height: auto;
+        }
+
+        .info_lba img {
+            width: 100%;
+            height: auto;
+        }
+
+        .info {
+            position: absolute;
+            z-index: 500;
+            display: none;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            text-align: center;
+            background-color: #003b4a;
+            color: #fff;
+            width: 95%;
+            height: auto;
+            padding: 20px;
+            margin-top: 10%;
+        }
+
+        .info_lba {
+            position: absolute;
+            z-index: 500;
+            display: none;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            text-align: center;
+            background-color: #003b4a;
+            color: #fff;
+            width: 95%;
+            height: auto;
+            padding: 20px;
+            margin-top: 10%;
+        }
+
+        .close {
+            width: 60px;
+            height: 30px;
+            text-align: center;
+            right: 0;
+            top: 0;
+            line-height: 30px;
+            border: 3px solid #fff;
+            cursor: pointer;
+            transition: 0.2s linear;
+        }
+
+            .close:hover {
+                border: 3px solid #22a571;
+                color: #22a571;
+                transition: 0.2s linear;
+            }
+
+        .close1 {
+            width: 60px;
+            height: 30px;
+            text-align: center;
+            right: 0;
+            top: 0;
+            line-height: 30px;
+            border: 3px solid #fff;
+            cursor: pointer;
+            transition: 0.2s linear;
+        }
+
+            .close1:hover {
+                border: 3px solid #22a571;
+                color: #22a571;
+                transition: 0.2s linear;
+            }
+
+        #lba_super_container {
+            margin: 0px auto;
+            width: 800px;
+            text-align: center;
+        }
+
+        #lba_container {
+            margin: 0px auto;
+            width: 800px;
+            display: inline-block;
+            height: 800px;
+            position: relative;
+        }
+
+        .lba {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            color: #003b4a;
+            transition: all 0.2s ease;
+            background-image: url('http://lofar.ie/wp-content/uploads/2020/08/lba.png');
+            background-size: cover;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .lba_active {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            color: #fff;
+            background-color: #22a571;
+            transition: all 0.2s ease;
+            background-image: url('http://lofar.ie/wp-content/uploads/2020/08/lba.png');
+            background-size: cover;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+
+        .lba:hover {
+            background-color: #22a571;
+            transform: scale(2.3);
+            color: #fff;
+            z-index: 1000;
+        }
+
+        .mapouter {
+            width: 100%;
+        }
+
+        iframe {
+            width: 100%;
+        }
+
+        .polyline {
+            stroke: #003b4a;
+            fill: none;
+            stroke-dasharray: 10,20;
+            stroke-width: 4;
+            stroke-linecap ="square";
+        }
+
+        #map {
+            height: 100vh;
+            position: absolute;
+            right: 0;
+            width: 80%;
+        }
+
+        svg {
+            position: relative;
+            icon: url('http://lofar.ie/wp-content/uploads/2020/08/hba.png');
+        }
+
+        path {
+            stroke-linecap: square;
+            pulseColor: #a1a1a1;
+        }
+
+        .travelMarker {
+            fill: yellow;
+            opacity: 0.75;
+        }
+
+        .waypoints {
+            fill: black;
+            opacity: 0;
+        }
+
+        }
+
+        .lineConnect {
+            fill: none;
+            stroke: black;
+            opacity: 1;
+        }
+
+        .locnames {
+            fill: black;
+            text-shadow: 1px 1px 1px #FFF, 3px 3px 5px #000;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        #stat_live_info {
+            width: 15%;
+            padding: 70px 30px;
+            color: #000;
+            font-size: 13px;
+            text-align: left;
+        }
+
+
+        /*----- The following code exists for mobile responsiveness -----*/
+        @media screen and (max-width: 800px) {
+            #map {
+                width: 100vw;
+                height: 90vh;
+                position: absolute;
+                right: 0;
+                left: 0;
+            }
+
+            #stat_live_info {
+                width: 100%;
+                margin-top: 90vh;
+            }
+
+            .container_hba {
+                width: 100vw;
+            }
+
+            .hba {
+                position: relative;
+                border: none;
+                display: inline-block;
+                width: 33px;
+                height: 33px;
+            }
+
+            #lba_super_container {
+                width: 100vw;
+            }
+
+            #lba_container {
+                width: 100vw;
+            }
+
+            #hba_super_container {
+                width: 100vw;
+            }
+
+            #hba_container {
+                width: 100vw;
+            }
+
+            .info {
+                width: 100vw;
+                height: 100vh;
+                z-index: 3000;
+                margin: 0px auto;
+            }
+        }
+    </style>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- -- Stylesheet for the map below -- -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+
+    <!-- -- Libraries for the map below -- -->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-ant-path" type="text/javascript"></script>
+    <script src="https://lofar.dias.ie/status_map/leaflet_curve/src/leaflet.curve.js"></script>
+
+
+    <!-- -- styling used to make website tab pages to split the website between international and local mode functionalities -- -->
+    <style>
+
+
+        /* Style tab links */
+        .tablink {
+            background-color:  #003b4a; 
+            color: white;
+            float: left;
+            border: 12px;
+            outline: 2px solid #22a571;
+            cursor: pointer;
+            padding: 12px 14px;
+            font-size: 16px;
+            width: 20%;
+        }
+
+            .tablink:hover {
+                /* background-color: #22a571; */
+            }
+
+        .button {
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            background-color: #003b4a;
+            text-align: center;
+            outline: 2px solid #22a571;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 0%;
+        }
+
+        .button1 {
+             background-color: #003b4a;
+        }
+
+            .button1:hover {
+                /* background-color: #22a571; */
+            }
+    </style>
+
+    <!-- -- Below CSS code is to ensure that the spectra images appear side by side (2 at a time taking 50% space)-- -->
+    <style>
+
+        div.Status Layout * {
+            color: black;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        /* Create two equal columns that sits next to each other */
+        .column {
+            flex: 50.0%;
+            padding: 5px;
+            transition: flex 1s; /* Animation */
+        }
+
+            .column:active {
+                flex: 125%
+            }
+
+        /* Rounded border between spectra */
+        hr.rounded {
+            border-top: 4px solid #22a571;
+            border-radius: 2px;
+        }
+    </style>
+
+
+
+    <script>
+        function activate_tiles() {
+            // Popup Content Manager for the HBAs
+            $(document).ready(function () {
+                $(".hba").on('click', function () {
+                    console.log("click!!!");
+                    $('.info').toggle("slide ");
+                });
+            });
+
+            $(document).ready(function () {
+                $(".hba_active").on('click', function () {
+                    console.log("click!!!");
+                    $('.info').toggle("slide ");
+                });
+            });
+
+            $(document).ready(function () {
+                $(".close").unbind("click").on('click', function () {
+                    $('.info').toggle("slide");
+                });
+            });
+            jQuery(document).ready(function () {
+                jQuery(".hba").click(function (event) {
+                    event.preventDefault()
+                    jQuery('.infocontent').html(jQuery(this).html());
+                });
+            });
+            jQuery(document).ready(function () {
+                jQuery(".hba_active").click(function (event) {
+                    event.preventDefault()
+                    jQuery('.infocontent').html(jQuery(this).html());
+                });
+            });
+
+            // Popup Content Manager for the LBAs
+            $(document).ready(function () {
+                $(".lba").on('click', function () {
+                    console.log("click!!!");
+                    $('.info_lba').toggle("slide");
+                });
+            });
+            $(document).ready(function () {
+                $(".lba_active").on('click', function () {
+                    console.log("click!!!");
+                    $('.info_lba').toggle("slide");
+                });
+            });
+            $(document).ready(function () {
+                $(".lba").on('click', function () {
+                    console.log("click!!!");
+                    $('.info_lba ew34xxxx').toggle("slide");
+                });
+            });
+            $(document).ready(function () {
+                $(".close1").unbind("click").on('click', function () {
+                    $('.info_lba').toggle("slide");
+                });
+            });
+            jQuery(document).ready(function () {
+                jQuery(".lba").click(function (event) {
+                    event.preventDefault()
+                    jQuery('.info_lbacontent').html(jQuery(this).html());
+                });
+            });
+            jQuery(document).ready(function () {
+                jQuery(".lba_active").click(function (event) {
+                    event.preventDefault()
+                    jQuery('.info_lbacontent').html(jQuery(this).html());
+                });
+            });
+        };
+    </script>
+
+
+</head>
+<body>
+    <!-- -- below buttons are used to divide page up into three different categories -- -->
+    <button class="tablink" onclick="openPage('Real Time Observations')" id="defaultOpen">Observations</button>
+    <button class="tablink" onclick="openPage('Status Layout')" id="statusmap">Antenna Status</button>
+    <button class="tablink" onclick="openPage('Telescope Info')">Engineering Info</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div id="Real Time Observations" class="tabcontent">
+        <center><h2>Real Time Spectra</h2></center>
+        <br>
+        <br>
+        <h4>By default if telescope is in local mode, real time plots are shown, updated on a rolling 10 minutes basis.</h4>
+        <br>
+        <h4>If you would like to access archived plots, pick a date in the calendar below and click "load graphs":</h4>
+        <!-- -- Inserting the Calendar element into website below-- -->
+        <div id="test">
+
+        </div>
+        <div id="container" class="date"><input id="value_date" type="text" /></div>
+        <button class="button button1" id="button_spectra">Load graphs</button>
+        <div id="spectra_update">
+        </div>
+        <br>
+        <br>
+        <div id="spectracontainer"></div>
+        <div id="javascript"> </div>
+        <script src="https://lofar.ie/monitor/filedates_calendar.log"></script>
+        <script>
+            //below code is inserting calendar
+            var ele = document.getElementById('container');
+            if (ele) {
+                ele.style.visibility = "visible";
+            }
+
+            var datepicker = new ej.calendars.DatePicker({
+                placeholder: 'Choose a date',
+                //choose dates to be disabled
+                width: 400,
+                value: new Date(),
+                // sets the format.
+                format: 'yyyy/MM/dd',
+                renderDayCell: onRenderCell,
+                // sets the placeholder
+                cssClass: 'e-custom-style'
+            });
+
+            function onRenderCell(args) {
+                var i;
+                for (i = 0; i < date_list.length; i++) {
+                    if (args.date.getDate() == date_list[i].getDate() && args.date.getMonth() == date_list[i].getMonth() && args.date.getFullYear() == date_list[i].getFullYear()) {
+                        //sets isDisabled to true to disable the date.
+                        args.isDisabled = true;
+                        //To know about the disabled date customization, you can refer in "styles.css".
+                    }
+                }
+            }
+
+            datepicker.appendTo('#value_date');
+
+            let chosen_date = document.getElementById('value_date');
+
+            var today = new Date();
+            var dd = today.getDate();
+
+            var mm = today.getMonth() + 1;
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd;
+            }
+
+            if (mm < 10) {
+                mm = '0' + mm;
+            }
+
+            today = yyyy + '/' + mm + '/' + dd;
+
+            document.getElementById("button_spectra").addEventListener("click", spectra_generator);
+            //formatted = chosen_date.replace(/\\|\//g, '')
+
+
+            //creating rows and columns for the spectra
+            for (var i = 1; i < 61; i++) {
+                var newDiv = document.createElement('div');
+                newDiv.id = 'spectra_X' + i;
+                newDiv.className = 'row';
+                document.getElementById('spectracontainer').appendChild(newDiv);
+
+
+                var newDiv = document.createElement('div');
+                newDiv.id = 'spectra_Y' + i;
+                newDiv.className = 'row';
+                document.getElementById('spectracontainer').appendChild(newDiv);
+                // UNCOMMENT THE BELOW CREATES DIVIDER BETWEEN EACH LINE
+                //document.getElementById("spectracontainer").innerHTML += "<hr>"
+
+            }
+
+            for (var i = 1; i < 61; i++) {
+                var left = document.createElement('div');
+                left.id = 'spectra_left_X' + i;
+                left.className = 'column';
+                document.getElementById('spectra_X' + i).appendChild(left);
+
+                var left = document.createElement('div');
+                left.id = 'spectra_left_Y' + i;
+                left.className = 'column';
+                document.getElementById('spectra_Y' + i).appendChild(left);
+
+                var right = document.createElement('div');
+                right.id = 'spectra_right_X' + i;
+                right.className = 'column';
+                document.getElementById('spectra_X' + i).appendChild(right);
+
+                var right = document.createElement('div');
+                right.id = 'spectra_right_Y' + i;
+                right.className = 'column';
+                document.getElementById('spectra_Y' + i).appendChild(right);
+            }
+
+            //the below function will generate the spectra, it displays by default the real time plots held directly on website, if user changes date it will look on data.lofar.ie for corresponding date plots
+            function spectra_generator() {
+                var images = spectracontainer.getElementsByTagName('img');
+                var l = images.length;
+                for (var i = 0; i < l; i++) {
+                    images[0].parentNode.removeChild(images[0]);
+                }
+
+                if (new String(today).valueOf() == new String(chosen_date.value).valueOf()) {
+
+                    for (var i = 1; i < 11; i++) {
+                        //Below plots the lightcurve and spectra for X axis
+                        document.getElementById("spectra_left_X" + i).innerHTML += "<img src=\"https://lofar.ie/monitor/imagespectro" + i + "X.png\" style = \"width:100%\">"
+                        document.getElementById("spectra_right_X" + i).innerHTML += "<img src=\"https://lofar.ie/monitor/imagelc" + i + "X.png\" style = \"width:100%\">"
+
+                        //Below plots the lightcurve and spectra for Y axis
+                        document.getElementById("spectra_left_Y" + i).innerHTML += "<img src=\"https://lofar.ie/monitor/imagespectro" + i + "Y.png\" style = \"width:100%\">"
+                        document.getElementById("spectra_right_Y" + i).innerHTML += "<img src=\"https://lofar.ie/monitor/imagelc" + i + "Y.png\" style = \"width:100%\">"
+
+                    }
+                }
+
+                else {
+                    var script = document.createElement('script');
+                    var prior = document.getElementsByTagName('script')[0];
+                    script.async = 1;
+
+                    script.onload = script.onreadystatechange = function (_, isAbort) {
+                        if (isAbort || !script.readyState || /loaded|complete/.test(script.readyState)) {
+                            script.onload = script.onreadystatechange = null;
+                            script = undefined;
+
+                            if (!isAbort && callback) setTimeout(callback, 0);
+                        }
+                    };
+
+                    script.src = "https://data.lofar.ie/monitor/" + chosen_date.value.replace(/\//g, '.') + "/figures.js";
+                    prior.parentNode.insertBefore(script, prior);
+                }
+
+                //below code ensures that no borken link images come up on website, makes it look cleaner
+
+                document.querySelectorAll('img').forEach(function (img) {
+                    img.onerror = function () { this.style.display = 'none'; };
+                })
+
+
+
+            }
+
+            spectra_generator()
+
+        </script>
+    </div>
+
+
+    <div id="Telescope Info" class="tabcontent">
+        <div id="info">
+            <center><h2>Real Time Information</h2></center>
+            <br>
+            <br>
+            <h3> LGC Status:</h3>
+            <div id="my_logfile2">
+
+            </div>
+
+            <br>
+            <br>
+            <h3> LCU Status:</h3>
+            <div id="my_logfile1">
+
+            </div>
+
+            <br>
+            <br>
+        </div>
+        <!-- -- Below style is required for log files to correctly load on website, do not remove!-- -->
+        <style>
+
+            #my_logfile1 {
+                white-space: pre-wrap;
+            }
+
+            #my_logfile2 {
+                white-space: pre-wrap;
+            }
+        </style>
+        <!-- -- Below script fetches the log files to be displayed on website-- -->
+        <script>
+            function loadDoc() {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("my_logfile1").innerHTML =
+                            this.responseText;
+                    }
+                };
+                xhttp.open("GET", "https://lofar.ie/monitor/filestatus_lcu.log", true);
+                xhttp.send();
+            }
+
+            function loadDoc2() {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("my_logfile2").innerHTML =
+                            this.responseText;
+                    }
+                };
+                xhttp.open("GET", "https://lofar.ie/monitor/filestatus_lgc.log", true);
+                xhttp.send();
+            }
+
+            //loading the log files that are used on the engineering info page
+            loadDoc();
+            loadDoc2();
+
+            //reloading the log files every 4 minutes to ensure to reflect new changes
+            setInterval(loadDoc(), 240000);
+            setInterval(loadDoc(), 240000)
+
+            //the log files are loaded without any line breaks, below code is necessary to add line breaks, do not delete
+            var change = document.getElementById("my_logfile2").value;
+            var myLineBreak = change.replace(/\r\n|\r|\n/g, "<br />");
+        </script>
+
+    </div>
+
+    <!-- -- Code below is from Jeremy's status map, note that it has been stripped of unneccesary elements, many of which would not work with the pre-imposed styling that comes with hosting webpage on wordpress website -- -->
+    <div id="Status Layout" class="tabcontent" style="width: 100%; background-color: #FFFFFF">
+        <center><h2 style='color:black;'>Status Map of Telescope </h2></center>
+        <!-- -- ALL BELOW CODE USED FOR STATUS MAP OF ANTENNAE-- -->
+        <body onresize="scaleTiles(), activate_tiles()">
+            <div class='info'>
+                <div class='close'>Close</div>
+                <div class='infocontent'>Placeholder</div>
+            </div>
+            <div id="hba_super_container">
+                <i style='color:black;'>This page is under development. Please note that the data is not live yet, the plots shown when clicking on antennae are updated in the netherlands roughly on a weekly basis.</i>
+                <div id='hba_container'>
+                    <!-- -- All of the HBA tiles are generated by JavaScript here -- -->
+                </div>
+            </div>
+            <div id='hba_info' style='color:black;'>
+                Ariel view of the High Band Antenna (HBAs).
+                </br>Clicking on each tile when in local mode brings up the status of the 16 antennas within it.
+
+                </br>
+            </div>
+
+            <div id="openweathermap-widget-16"></div>
+
+            <div class='info_lba'>
+                <div class='close1'>Close</div>
+                <div class='info_lbacontent'>Placeholder</div>
+            </div>
+            <div id='lba_super_container'>
+
+                <div id='lba_container'>
+                    <!-- -- All of the LBA tiles are generated by JavaScript here -- -->
+                </div>
+
+                <div id='hba_info' style='color:black;'>
+                    Ariel view of the Low Band Antenna (LBAs).
+                    </br>Clicking on each antenna when in local mode brings up the antenna status.
+                </div>
+            </div>
+
+            <!-- -- The Map -- -->
+            <div id="map"></div>
+
+            <!-- -- Station Information -- -->
+            <div id='stat_live_info'>
+                <div id="span1"></div>
+
+                <div id="span3"></div>
+
+                <div id="span2">
+                    <h2 style='color:black;'>Key:</h2>
+
+                    <i>Green Motion Lines:</i> International Mode - Data to Netherlands
+                    <br /><br />
+                    Grey Stationary Lines: Local Mode - Each station used individually
+                </div>
+                <br /><br />
+                <br /><br />
+                <br /><br />
+                <br /><br />
+            </div>
+
+            <!-- -- The JavaScript below controls the map functionality (using LeafletJS) -- -->
+            <!-- -- At some point it would be good to put the javascript in a separate file. -- -->
+            <script type='text/javascript'>
+
+                //Below code ensures that when user changes tabs on monitoring website, the status map is reloaded, otherwise it would not be functional
+                document.getElementById("statusmap").addEventListener("click", scaleTiles);
+                document.getElementById("statusmap").addEventListener("click", activate_tiles);
+
+                // Creating a Layer object
+                var minimal = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+                var earth = new L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '' });
+
+                var minimal_2 = new L.TileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png');
+
+                var bounds = new L.LatLngBounds(new L.LatLng(81.4139332828511, -166.81195966499448), new L.LatLng(-48.45835188280866, 194.79813092431195));
+
+                // Creating map options
+                var mapOptions = {
+                    center: [52.915245, 6.869848],
+                    zoom: 5.4,
+                    layers: [minimal, earth, minimal_2],
+                    enter: bounds.getCenter(),
+                    maxBounds: bounds,
+                    maxBoundsViscosity: 1.0
+                }
+
+                // Creating a map object
+                var map = new L.map('map', mapOptions);
+
+                map.on('click', function (ev) {
+                    var latlng = map.mouseEventToLatLng(ev.originalEvent);
+                    console.log(latlng.lat + ', ' + latlng.lng);
+                });
+
+                var baseMaps = {
+                    "Territories": minimal,
+                    "Satellite View": earth,
+                    "Geographic Borders": minimal_2
+                };
+
+                var LeafIcon = L.Icon.extend({
+                    options: {
+                        iconSize: [25, 25],
+                        shadowSize: [0, 0],
+                        iconAnchor: [12, 12],
+                        shadowAnchor: [4, 62],
+                    }
+                });
+
+                var greenIcon = new LeafIcon({
+                    iconUrl: 'http://lofar.ie/wp-content/uploads/2020/08/hba.png',
+                    //shadowUrl: ''
+                });
+
+                // The stations markers for locations
+                var m_IE_birr = L.marker([53.095039, -7.921957], { icon: greenIcon }).addTo(map).bindPopup("<b>I-LOFAR, Birr</b>").openPopup();
+
+                var m_UK_chib = L.marker([51.143901, -1.434145], { icon: greenIcon }).addTo(map).bindPopup("<b>Chilbolton</b>");
+
+                var m_SUPTERP = L.marker([52.915245, 6.869848], { icon: greenIcon }).addTo(map).bindPopup("<b>LOFAR CORE and REMOTE Stations</b>").openPopup();
+
+                var m_GER_eff = L.marker([50.523149, 6.883575], { icon: greenIcon }).addTo(map).bindPopup("<b>Effelsberg</b>");
+                var m_GER_unter = L.marker([48.501215, 11.287567], { icon: greenIcon }).addTo(map).bindPopup("<b>Unterweilenbach</b>");
+                var m_GER_taut = L.marker([50.979460, 11.710707], { icon: greenIcon }).addTo(map).bindPopup("<b>Tautenburg</b>");
+                var m_GER_pot = L.marker([52.438182, 13.016394], { icon: greenIcon }).addTo(map).bindPopup("<b>Potsdam</b>");
+                var m_GER_jul = L.marker([50.897165, 6.423889], { icon: greenIcon }).addTo(map).bindPopup("<b>Julich</b>");
+                var m_GER_nord = L.marker([53.698717, 9.969277], { icon: greenIcon }).addTo(map).bindPopup("<b>Norderstedt</b>");
+
+                var m_FRA_nan = L.marker([47.375703, 2.192982], { icon: greenIcon }).addTo(map).bindPopup("<b>Nancay</b>");
+
+                var m_SWE_ons = L.marker([57.398965, 11.930267], { icon: greenIcon }).addTo(map).bindPopup("<b>Onsala</b>");
+
+                var marker_POL_bald = L.marker([53.593734, 20.589443], { icon: greenIcon }).addTo(map).bindPopup("<b>Baldy</b>");
+                var marker_POL_boro = L.marker([52.275786, 17.073614], { icon: greenIcon }).addTo(map).bindPopup("<b>Borowiec</b>");
+                var marker_POL_lazy = L.marker([49.964854, 20.489611], { icon: greenIcon }).addTo(map).bindPopup("<b>Lazy</b>");
+
+                var marker_LAT_ven = L.marker([57.553493, 21.854916], { icon: greenIcon }).addTo(map).bindPopup("<b>Ventspils</b>");
+
+                L.control.layers(baseMaps).addTo(map);
+
+
+                function getWeekNumber(d) {
+                    // Copy date so don't modify original
+                    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+                    // Set to nearest Thursday: current date + 4 - current day number
+                    // Make Sunday's day number 7
+                    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+                    // Get first day of year
+                    var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+                    // Calculate full weeks to nearest Thursday
+                    var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+                    // Return array of year and week number
+                    return [d.getUTCFullYear(), weekNo];
+                }
+
+                var result = getWeekNumber(new Date());
+
+                var response = '';
+                month = new Date().getMonth() + 1;
+                var url = "https://crossorigin.me/https://old.astron.nl/lofar-schedule/schedule/schedule.php?week=" + result[1] + "&year=" + new Date().getFullYear() + "&month=" + month;
+
+                // This function below is a stand-in because the web-scraping gets blocked by the CORS policy
+                // Therefore the 'live' map isn't live at the moment
+                function notSoLiveMap() {
+
+
+                    var animate_style = {
+                        "delay": 400,
+                        "dashArray": [10, 20],
+                        "weight": 3,
+                        "color": "#22A571",
+                        "pulseColor": "#FFFFFF",
+                        "paused": false,
+                        "reverse": false,
+                        "hardwareAccelerated": true,
+                        use: L.curve,
+                    };
+
+
+                    // Lines connecting the stations
+                    var IE_CORE_line = L.polyline.antPath(['M', [53.095039, -7.921957], 'C', [54.367758, -4.8559570], [52.1469733, -4.06494], [52.915245, 6.869848]], animate_style).addTo(map);
+                    var ÙK_CORE_line = L.polyline.antPath(['M', [51.143901, -1.434145], 'Q', [52.61639, 2.043457031], [52.915245, 6.869848]], animate_style).addTo(map);
+                    var FRA_CORE_line = L.polyline.antPath(['M', [47.375703, 2.192982], 'Q', [51.041393, 2.438964], [52.915245, 6.869848]], animate_style).addTo(map);
+                    var GER_ue_line = L.polyline.antPath(['M', [48.501215, 11.287567], 'Q', [50.2577419, 9.931640], [50.523149, 6.883575]], animate_style).addTo(map);
+                    var GER_ej_line = L.polyline.antPath(['M', [50.523149, 6.883575], 'Q', [50.574516, 6.119384], [50.897165, 6.423889]], animate_style).addTo(map);
+                    var GER_j_CORE_line = L.polyline.antPath(['M', [50.897165, 6.423889], 'Q', [52.0997, 8.62426], [52.915245, 6.869848]], animate_style).addTo(map);
+                    var POL_GER_line = L.polyline.antPath(['M', [49.964854, 20.489611], 'Q', [49.36806, 15.139160], [50.979460, 11.710707]], animate_style).addTo(map);
+                    var GER_CORE_line = L.polyline.antPath(['M', [50.979460, 11.710707], 'Q', [53.0940, 9.953613], [52.915245, 6.869848]], animate_style).addTo(map);
+                    var POL_bb_line = L.polyline.antPath(['M', [57.553493, 21.854916], [53.593734, 20.589443], 'Q', [52.469396, 19.8413085], [52.275786, 17.073614]], animate_style).addTo(map);
+                    var POL_bb_line = L.polyline.antPath(['M', [52.275786, 17.073614], 'Q', [51.7814, 14.85351], [52.438182, 13.016394]], animate_style).addTo(map);
+                    var GER_CORE_2_line = L.polyline.antPath(['M', [52.438182, 13.016394], 'Q', [53.3964321, 10.0195312], [52.915245, 6.869848]], animate_style).addTo(map);
+                    var SWE_GER_line = L.polyline.antPath(['M', [57.398965, 11.930267], 'Q', [55.615589, 13.2714843], [53.698717, 9.969277]], animate_style).addTo(map);
+                    var GER_CORE_3_line = L.polyline.antPath(['M', [53.698717, 9.969277], 'Q', [53.080827, 8.876953], [52.915245, 6.869848]], animate_style).addTo(map);
+                };
+
+                notSoLiveMap();
+
+                var response = '';
+                month = new Date().getMonth() + 1;
+                var url = "https://crossorigin.me/https://old.astron.nl/lofar-schedule/schedule/schedule.php?week=" + (result[1] + 1) + "&year=" + new Date().getFullYear() + "&month=" + month;
+                console.log(url);
+
+
+                // The lists of x and y positions for the HBAs and LBAs.
+                var x_pos = [-6.735, 1.427, -4.624, 2.332, 13.566, 19.77999, 11.619, 16.58199, -9.407, -16.315, -16.652, -13.216, 3.309, 4.196, 7.609, 9.535, 9.68699, 7.895, 16.37099, 15.41299, -17.32099, -23.51499, -25.03299, -29.26799, -11.521, -12.361, -15.58899, -19.59599, -3.821, -2.938, -12.68799, -11.21699, 20.07999, 23.62299, 33.39098, 30.52299, -0.235, 5.367, -0.99, 2.371, 0.649, 10.15899, 6.77499, 16.15899, -6.076, -7.269, -10.318, -11.344, 15.45099, -12.02999, 24.71599, 22.09499, -24.85899, -20.69599, 28.82399, 6.445, -5.335, -19.99199, -14.75399, -1.868, -8.321, -16.86799, 8.32599, 3.073, 9.982, -3.868, 2.771, -0.121, -20.97599, -21.12699, -4.562, -0.099, -5.844, 17.01199, 8.052, 27.18599, -8.176, -12.10899, -7.795, 17.43399, 10.74499, 19.72399, 14.13599, -0.815, -19.86699, -2.523, 8.994, 5.901, 4.459, 25.03799, -4.087, -27.21199, 21.68199, -8.031, -13.46299, 12.91699]
+                var y_pos = [12.389, 13.244, 15.63099, 16.531, -15.95299, -14.57998, -24.03998, -24.07998, 17.96899, 19.14799, 23.16199, 25.49499, -3.90099, 1.75701, 1.924, -2.47999, 4.796, 9.501, 7.66701, 12.253, -12.332, -5.788, -17.53599, -6.196, 6.31, 10.37199, 4.99, 5.701, -20.34299, -24.16199, -22.18699, -28.00799, 6.433, 0.894, 2.60001, 8.43001, -7.293, -8.54999, -11.227, -12.79899, 25.369, 22.045, 30.50099, 25.712, -4.35399, -8.192, -2.107, -7.265, -9.30399, -16.57999, -15.22299, -2.24599, 3.39099, -23.87799, -5.74399, -5.24199, 28.84099, -1.513, 13.505, -30.93099, -14.838, -3.766, 18.143, 6.021, -11.63199, 6.55999, -23.28799, -16.209, 11.009, 14.35999, 1.188, 20.687, -11.60599, -1.51699, -14.59298, -8.95599, 4.92, -11.346, 21.41999, 17.876, 13.323, -10.05699, 4.514, 4.588, -17.241, -4.612, -30.75199, -21.91099, 9.137, 19.396, 10.029, 1.154, 11.11601, 1.38599, -0.56499, -3.02099,]
+                var x_hba = [25.74917, 25.75001, 25.74986, 25.74981, 25.75065, 20.59905, 20.6, 20.59985, 20.59969, 20.60053, 20.60048, 20.60033, 15.44904, 15.44988, 15.44973, 15.44968, 15.44952, 15.45037, 15.45021, 15.45006, 15.451, 10.29892, 10.29887, 10.29971, 10.29956, 10.29941, 10.30025, 10.3002, 10.30004, 10.30088, 10.30073, 10.30068, 5.14875, 5.1496, 5.14954, 5.14939, 5.15023, 5.15008, 5.14993, 5.15087, 5.15072, 5.15056, 5.15141, -0.00141, -0.00057, -0.00073, -0.00088, 0.00007, -0.00024, 0.0006, 0.00045, 0.0004, 0.00124, -5.15069, -5.15074, -5.15089, -5.15005, -5.15021, -5.15026, -5.14941, -5.14957, -5.14972, -5.14888, -5.14893, -10.30086, -10.30101, -10.30007, -10.30022, -10.30038, -10.29954, -10.29969, -10.29974, -10.29989, -10.29905, -10.2992, -15.45118, -15.45034, -15.45049, -15.45054, -15.4497, -15.44985, -15.45001, -15.44906, -15.44922, -20.60051, -20.60066, -20.59982, -20.59987, -20.60002, -20.59918, -20.59933, -25.74983, -25.74999, -25.75014, -25.75029, -25.74935]
+                var y_hba = [10.30098, 5.1507, 0.00053, -5.14866, -10.29894, 15.45031, 10.30103, 5.15085, 0.00067, -5.14961, -10.29879, -15.44896, 20.60063, 15.45036, 10.30018, 5.151, 0.00082, -5.14945, -10.29963, -15.4498, -20.59909, 25.74996, 20.60078, 15.4505, 10.30033, 5.15015, -0.00013, -5.1493, -10.29948, -15.44976, -20.59994, -25.74912, 25.75011, 20.59983, 15.45065, 10.30048, 5.1502, 0.00002, -5.15016, -10.29944, -15.44961, -20.59978, -25.75006, 25.75025, 20.59997, 15.44981, 10.29963, 5.15034, -5.15001, -10.30028, -15.45046, -20.59963, -25.74991, 25.7493, 20.60013, 15.44995, 10.29967, 5.1495, 0.00031, -5.14996, -10.30013, -15.45031, -20.60059, -25.74977, 25.74946, 20.59928, 15.45, 10.29982, 5.14963, -0.00064, -5.15081, -10.3, -15.45017, -20.60044, -25.75062, 20.59942, 15.44914, 10.29897, 5.14979, -0.00049, -5.15066, -10.30084, -15.45012, -20.6003, 15.44929, 10.29912, 5.14884, -0.00034, -5.15052, -10.3008, -15.45097, 10.29917, 5.14899, -0.00119, -5.15136, -10.30065]
+
+                function displayLBATiles(scaleX, scaleY) {
+
+                    for (var i = 0; i < x_pos.length; i++) {
+                        var newDiv = document.createElement('div');
+                        newDiv.id = 'lba_' + i;
+                        newDiv.className = 'lba';
+                        newDiv.style.position = 'absolute';
+                        newDiv.style.left = x_pos[i] * scaleX + (document.getElementById("lba_container").offsetWidth / 2) + 'px';
+                        newDiv.style.top = y_pos[i] * scaleY + (document.getElementById("lba_container").offsetHeight / 2) + 'px';
+
+                        if (i <= 12) {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/lbh/ie613_0.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        }
+                        else if (i > 13 && i <= 23) {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/lbh/ie613_1.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        }
+                        else if (i > 24 && i <= 35) {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/lbh/ie613_2.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        }
+                        else if (i > 36 && i <= 47) {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/lbh/ie613_3.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        }
+                        else if (i > 48 && i <= 59) {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/lbh/ie613_4.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        }
+                        else if (i > 59 && i <= 71) {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/lbh/ie613_5.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        }
+                        else if (i > 71 && i <= 83) {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/lbh/ie613_6.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        }
+                        else {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/lbh/ie613_7.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        };
+                        document.getElementById('lba_container').appendChild(newDiv);
+                    };
+
+
+                };
+
+                function displayHBATiles(scaleX, scaleY) {
+
+                    for (var i = 0; i < x_hba.length; i++) {
+                        var newDiv = document.createElement('div');
+                        newDiv.id = 'hba_' + i;
+                        newDiv.className = 'hba';
+                        newDiv.style.position = 'absolute';
+                        newDiv.style.left = x_hba[i] * scaleX + (document.getElementById("hba_container").offsetWidth / 2 - 20) + 'px';
+                        newDiv.style.top = y_hba[i] * scaleY + (document.getElementById("hba_container").offsetHeight / 2 - 20) + 'px';
+
+                        if (i <= 9) {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/hba/Tile00' + i + '.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        }
+
+                        else {
+                            url = 'https://proxy.lofar.eu/array_status/stationtests/DATABASE/DATA/PNG/ie613/hba/Tile0' + i + '.png'
+                            newDiv.innerHTML = '<b>' + i + '</b></br></br><img src =\'' + url + '\'/>';
+                        };
+
+                        document.getElementById('hba_container').appendChild(newDiv);
+
+                    };
+
+                };
+
+                // Function below to change size of tiles depending on browser size (e.g. phone/laptop)
+                function scaleTiles() {
+                    var el = document.getElementById('hba_container');
+                    while (el.firstChild) el.removeChild(el.firstChild);
+
+                    var el2 = document.getElementById('lba_container');
+                    while (el2.firstChild) el2.removeChild(el2.firstChild);
+
+
+                    var w = window.outerWidth;
+                    if (w > 800) {
+                        displayHBATiles(11, 11);
+                        displayLBATiles(11, 11);
+                    }
+                    else {
+                        displayHBATiles(7, 7);
+                        displayLBATiles(7, 7);
+                    };
+
+
+                };
+
+                scaleTiles();
+            </script>
+
+
+
+            <style>
+                div.hba * {
+                    color: white;
+                }
+            </style>
+
+            <style>
+                div.lba * {
+                    color: black;
+                }
+            </style>
+        </body>
+        <div>
+            <br /><br /><br /><br />            <br /><br /><br /><br />            <br /><br /><br /><br />
+            <br /><br /><br /><br />            <br /><br /><br /><br />            <br /><br /><br /><br />
+        </div>
+    </div>
+
+
+    <script>
+        function openPage(pageName, elmnt, color) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].style.backgroundColor = "";
+            }
+            document.getElementById(pageName).style.display = "block";
+            elmnt.style.backgroundColor = color;
+        }
+
+        // Get the element with id="defaultOpen" and click on it
+        document.getElementById("defaultOpen").click();
+    </script>
+    </div>
+</body>
+</html>
+</html>
