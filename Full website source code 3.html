@@ -23,9 +23,6 @@
 
     <style>
         /*------------------------------------STYLING FOR CALENDAR DONE BELOW----------------------------------------------------------------------- */
-        div:empty {
-            display: none;
-        }
 
         #container {
             visibility: hidden;
@@ -35,7 +32,7 @@
         #loader {
             color: #22a571;
             height: 40px;
-            width: 30%;
+            width: 200 px;
             position: absolute;
             top: 45%;
             left: 45%;
@@ -90,6 +87,7 @@
 
     <!-- ------------------------------------ ALL STYLING FOR THE STATUS MAP DONE BELOW-------------------------------------------------------------------------------------------------- -->
     <style>
+
         div.lba * {
             color: black;
         }
@@ -97,7 +95,6 @@
         div.hba * {
             color: white;
         }
-
         #hba_info {
             text-align: center;
             width: 100%;
@@ -416,10 +413,10 @@
             font-size: 16px;
             width: 20%;
         }
-
+            
             .tablink:hover {
                 /*UNCOMMENT BELOW IF YOU WANT BUTTONS TO HAVE COLOUR WHEN HOVERING OVER THEM*/
-                 background-color: #22a571;
+                background-color: #22a571; 
             }
 
         .button {
@@ -439,6 +436,9 @@
 
         .button1 {
             background-color: #003b4a;
+            position: absolute;
+            left: 450px;
+            top:  330px;
         }
 
             .button1:hover {
@@ -452,6 +452,13 @@
     <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
     <!-- -- Below STYLING code is to ensure that the spectra images appear side by side (2 at a time taking 50% space)-- -->
     <style>
+        .row:empty {
+            display: none;
+        }
+
+        .column:empty {
+            display: none;
+        }
 
         div.Status Layout * {
             color: black;
@@ -583,9 +590,9 @@
 <!-- -- NOTE THAT EVERYTHING INBETWEEN <BODY> and </BODY>, I.E ALL THE CODE BELOW NEEDS TO BE INSERTED INTO "CODE BLOCK" ON WORDPRESS EDITOR -- -->
 <body>
     <!-- ----------------------- below buttons are used to divide page up into three different categories --------------------------------------------------- -->
-    <button class="tablink" onclick="openPage('Real Time Observations')" id="defaultOpen">Observations</button>
-    <button class="tablink" onclick="openPage('Status Layout')" id="statusmap">Antenna Status</button>
-    <button class="tablink" onclick="openPage('Telescope Info')">Engineering Info</button>
+    <button class="tablink" onclick="openPage('Real Time Observations',this, color ='#22a585')" id="defaultOpen">Observations</button>
+    <button class="tablink" onclick="openPage('Status Layout',this, color ='#22a585')" id="statusmap">Antenna Status</button>
+    <button class="tablink" onclick="openPage('Telescope Info',this, color ='#22a585')">Engineering Info</button>
     <br>
     <br>
     <br>
@@ -600,7 +607,7 @@
         <h4>By default if telescope is in local mode, real time plots are shown, updated on a rolling 10 minutes basis.</h4>
         <br>
         <h4>If you would like to access archived plots, pick a date in the calendar below and click "load graphs":</h4>
-
+        <br>
         <!-- ------------------------ Inserting the Calendar element into website below-- --------------------------------->
         <div id="test"></div>
         <div id="container" class="date"><input id="value_date" type="text" /></div>
@@ -609,8 +616,10 @@
         <br>
         <br>
         <!-- ------------------------ BELOW DIV CONTAINS SPECTRA-- --------------------------------->
-        <div id="spectracontainer"></div>
-        <div id="javascript"> </div>
+        <div id="textenter">
+            <center><h4 id="changing">Showing data from the last time telescope was in Local Mode:</h4></center>
+        </div>
+        <div id="spectracontainer" class="spectrahide"></div>
 
         <!-- ------------------------ FETCHING THE BLACKLIST OF DATES FOR CALENDAR-- --------------------------------->
         <script src="https://lofar.ie/monitor/filedates_calendar.js"></script>
@@ -744,6 +753,7 @@
 
                     script.src = "https://data.lofar.ie/monitor/" + chosen_date.value.replace(/\//g, '.') + "/figures.js";
                     prior.parentNode.insertBefore(script, prior);
+                    changing.textContent = "Showing data for date: " + chosen_date.value;
                 }
 
                 //below code ensures that no broken link images come up on website, makes it look cleaner
@@ -827,9 +837,9 @@
             loadDoc();
             loadDoc2();
 
-            //reloading the log files every 1 minute to ensure to reflect new changes
-            setInterval(loadDoc(), 60000);
-            setInterval(loadDoc(), 60000);
+            //reloading the log files every 4 minutes to ensure to reflect new changes
+            setInterval(loadDoc(), 240000);
+            setInterval(loadDoc(), 240000)
 
             //the log files are loaded without any line breaks, below code is necessary to add line breaks, do not delete
             var change = document.getElementById("my_logfile2").value;
